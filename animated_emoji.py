@@ -4,8 +4,8 @@ sense = SenseHat()
 
 # display is 8x8 pixels
 
-O = [255, 255, 255]
-X = [0, 0, 0]
+X = [255, 255, 255]
+O = [0, 0, 0]
 
 emoji_happy = [
     O, O, O, O, O, O, O, O,
