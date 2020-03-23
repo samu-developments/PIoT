@@ -20,13 +20,13 @@ class SenseTemp:
         hot: [R for _ in range(64)]
     }
 
-    def __init__(self, json_file: str):
+    def __init__(self, json_file):
         with open(json_file, "r+") as f:
             self.temps = json.load(f)
         f.close()
         self.sense = SenseHat()
 
-    def get_temp_level(self, temperature: int):
+    def get_temp_level(self, temperature):
         if temperature < self.temps['cold_max']:
             return SenseTemp.cold
         elif temperature < self.temps['comfortable_max']:
