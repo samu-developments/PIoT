@@ -1,5 +1,3 @@
-import json
-
 {
     "cold_max": 10,
     "comfortable_min": 10,
