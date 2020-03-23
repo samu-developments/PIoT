@@ -1,6 +1,7 @@
 from sense_hat import SenseHat
-import json, time
+import json, time, logging
 
+logging.basicConfig(filename="monitorAndDisplay.log", level=logging.DEBUG)
 
 class SenseTemp:
 
@@ -38,6 +39,7 @@ class SenseTemp:
         temp = self.sense.get_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
         self.sense.set_pixels(display_temp)
+        logging.debug("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
 
 
 if __name__ == '__main__':
