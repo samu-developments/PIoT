@@ -40,7 +40,7 @@ class SenseTemp:
         temp = self.sense.get_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
         self.sense.set_pixels(display_temp)
-        logging.debug("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
+        logging.info("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
 
 
 if __name__ == '__main__':
