@@ -1,7 +1,8 @@
 from sense_hat import SenseHat
 import json, time, logging
 
-logging.basicConfig(filename="monitorAndDisplay.log", level=logging.DEBUG)
+logging.basicConfig(filename="monitorAndDisplay.log", level=logging.INFO)
+
 
 class SenseTemp:
 
