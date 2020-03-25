@@ -17,9 +17,9 @@ class SenseTemp:
     hot = 'hot'
 
     led_displays = {
-        cold: [B for _ in range(64)],
-        comfortable: [G for _ in range(64)],
-        hot: [R for _ in range(64)]
+        cold: B,
+        comfortable: G,
+        hot: R
     }
 
     def __init__(self, json_file):
@@ -37,9 +37,9 @@ class SenseTemp:
             return SenseTemp.hot
 
     def display_temp(self):
-        temp = self.sense.get_temperature()
+        temp = round(self.sense.get_temperature())
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
-        self.sense.set_pixels(display_temp)
+        self.sense.show_message(str(temp), text_colour=display_temp)
         logging.info("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
 
 
