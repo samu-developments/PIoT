@@ -36,8 +36,12 @@ class SenseTemp:
         else:
             return SenseTemp.hot
 
+    # TODO: calibrate a bit better?
+    def get_real_temperature(self) -> int:
+        return round(self.sense.get_temperature() - 10)
+
     def display_temp(self):
-        temp = round(self.sense.get_temperature())
+        temp = self.get_real_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
         self.sense.show_message(str(temp), text_colour=display_temp)
         logging.info("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
