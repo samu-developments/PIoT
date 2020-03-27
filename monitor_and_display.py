@@ -1,9 +1,7 @@
 from sense_hat import SenseHat
 from json import JSONDecodeError
 
-import sys, json, time, logging
-
-logging.basicConfig(filename="monitorAndDisplay.log", level=logging.INFO)
+import sys, json, time
 
 
 class SenseTemp:
@@ -31,7 +29,7 @@ class SenseTemp:
     # Open and validate config file
     def __init__(self, sense: SenseHat, json_file: str):
         try:
-            with open(json_file, "r+") as f:
+            with open(json_file) as f:
                 temps: dict = json.load(f)
                 self.temps = self.validate_config(temps)
         except FileNotFoundError:
@@ -70,7 +68,6 @@ class SenseTemp:
         temp = self.get_real_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
         self.sense.show_message(str(temp), text_colour=display_temp)
-        logging.info("Temp: {}, level: {}".format(temp, self.get_temp_level(temp)))
 
 
 if __name__ == '__main__':
@@ -79,11 +76,9 @@ if __name__ == '__main__':
         # use provided argument if exists, otherwise default to 'config.json'.
         # eg. python3 my_custom_temp_file.json. TODO: document in README.md
         config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
-        logging.info(config)
         senseTemp = SenseTemp(sense, config)
         while True:
             senseTemp.display_temp()
             time.sleep(10)
     except Exception as e:
-        logging.info(e)
         sense.show_message(e.args[0])
