@@ -18,6 +18,14 @@ class SenseTemp:
     comfortable = 'comfortable'
     hot = 'hot'
 
+    # keys in config.json
+    config_values = [
+        'cold_max',
+        'comfortable_min',
+        'comfortable_max',
+        'hot_min'
+    ]
+
     led_displays = {
         cold: B,
         comfortable: G,
@@ -27,13 +35,22 @@ class SenseTemp:
     def __init__(self, sense: SenseHat, json_file: str):
         try:
             with open(json_file, "r+") as f:
-                self.temps = json.load(f)
+                temps: dict = json.load(f)
                 f.close()
+                self.temps = self.validate_config(temps)
         except FileNotFoundError:
             raise RuntimeError('Error, config file not found')
         except JSONDecodeError:
             raise RuntimeError('Error, could not read config')
         self.sense = sense
+
+    @staticmethod
+    def validate_config(temps: dict) -> dict:
+        if all(k in SenseTemp.config_values for k in temps.keys()) and \
+                all(isinstance(temps[t], int) for t in SenseTemp.config_values):
+            return temps
+        else:
+            raise ValueError("Config values are wrong")
 
     def get_temp_level(self, temperature):
         if temperature < self.temps['cold_max']:
