@@ -1,4 +1,6 @@
 from sense_hat import SenseHat
+from json import JSONDecodeError
+
 import json, time, logging
 
 logging.basicConfig(filename="monitorAndDisplay.log", level=logging.INFO)
@@ -22,11 +24,16 @@ class SenseTemp:
         hot: R
     }
 
-    def __init__(self, json_file):
-        with open(json_file, "r+") as f:
-            self.temps = json.load(f)
-        f.close()
-        self.sense = SenseHat()
+    def __init__(self, sense: SenseHat, json_file: str):
+        try:
+            with open(json_file, "r+") as f:
+                self.temps = json.load(f)
+                f.close()
+        except FileNotFoundError:
+            raise RuntimeError('Error, config file not found')
+        except JSONDecodeError:
+            raise RuntimeError('Error, could not read config')
+        self.sense = sense
 
     def get_temp_level(self, temperature):
         if temperature < self.temps['cold_max']:
@@ -48,7 +55,12 @@ class SenseTemp:
 
 
 if __name__ == '__main__':
-    senseTemp = SenseTemp('config.json')
-    while True:
-        senseTemp.display_temp()
-        time.sleep(10)
+    sense = SenseHat()
+    try:
+        senseTemp = SenseTemp(sense, 'config.json')
+        while True:
+            senseTemp.display_temp()
+            time.sleep(10)
+    except Exception as e:
+        logging.info(e)
+        sense.show_message(e.args[0])
