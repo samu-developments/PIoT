@@ -13,7 +13,7 @@ class SenseTemp:
     comfortable = 'comfortable'
     hot = 'hot'
 
-    # keys in config.json
+    # temp level keys in config.json
     config_values = [
         'cold_max',
         'comfortable_min',
@@ -21,12 +21,14 @@ class SenseTemp:
         'hot_min'
     ]
 
+    # display colors for different temp levels
     led_displays = {
         cold: [0, 0, 255],
         comfortable: [0, 255, 0],
         hot: [255, 0, 0]
     }
 
+    # Open and validate config file
     def __init__(self, sense: SenseHat, json_file: str):
         try:
             with open(json_file, "r+") as f:
@@ -38,6 +40,9 @@ class SenseTemp:
             raise RuntimeError('Error, could not read config')
         self.sense = sense
 
+    # Check keys and values in provided dictionary (json file)
+    # Keys should be in the list of valid entries (config_values)
+    # Values should be int
     @staticmethod
     def validate_config(temps: dict) -> dict:
         if all(k in SenseTemp.config_values for k in temps.keys()) and \
@@ -46,7 +51,8 @@ class SenseTemp:
         else:
             raise ValueError("Config values are wrong")
 
-    def get_temp_level(self, temperature):
+    # Based on provided config, return temp level as string
+    def get_temp_level(self, temperature: int) -> str:
         if temperature < self.temps['cold_max']:
             return SenseTemp.cold
         elif temperature < self.temps['comfortable_max']:
@@ -55,9 +61,11 @@ class SenseTemp:
             return SenseTemp.hot
 
     # TODO: calibrate a bit better?
+    # Helper method to get temperature
     def get_real_temperature(self) -> int:
         return round(self.sense.get_temperature() - 10)
 
+    # Get read and display temperature
     def display_temp(self):
         temp = self.get_real_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
