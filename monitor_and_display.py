@@ -8,11 +8,6 @@ logging.basicConfig(filename="monitorAndDisplay.log", level=logging.INFO)
 
 class SenseTemp:
 
-    # colors
-    R = [255, 0, 0]
-    G = [0, 255, 0]
-    B = [0, 0, 255]
-
     # temperature levels
     cold = 'cold'
     comfortable = 'comfortable'
@@ -27,16 +22,15 @@ class SenseTemp:
     ]
 
     led_displays = {
-        cold: B,
-        comfortable: G,
-        hot: R
+        cold: [0, 0, 255],
+        comfortable: [0, 255, 0],
+        hot: [255, 0, 0]
     }
 
     def __init__(self, sense: SenseHat, json_file: str):
         try:
             with open(json_file, "r+") as f:
                 temps: dict = json.load(f)
-                f.close()
                 self.temps = self.validate_config(temps)
         except FileNotFoundError:
             raise RuntimeError('Error, config file not found')
