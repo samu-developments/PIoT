@@ -1,7 +1,7 @@
 from sense_hat import SenseHat
 from json import JSONDecodeError
 
-import json, time, logging
+import sys, json, time, logging
 
 logging.basicConfig(filename="monitorAndDisplay.log", level=logging.INFO)
 
@@ -57,7 +57,11 @@ class SenseTemp:
 if __name__ == '__main__':
     sense = SenseHat()
     try:
-        senseTemp = SenseTemp(sense, 'config.json')
+        # use provided argument if exists, otherwise default to 'config.json'.
+        # eg. python3 my_custom_temp_file.json. TODO: document in README.md
+        config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
+        logging.info(config)
+        senseTemp = SenseTemp(sense, config)
         while True:
             senseTemp.display_temp()
             time.sleep(10)
