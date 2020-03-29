@@ -1,7 +1,7 @@
+import sys, json, time
+
 from sense_hat import SenseHat
 from json import JSONDecodeError
-
-import sys, json, time
 
 
 class SenseTemp:
@@ -11,7 +11,7 @@ class SenseTemp:
     comfortable = 'comfortable'
     hot = 'hot'
 
-    # temp level keys in config.json
+    # temp level keys in config.json. Needs to be in ascending order
     config_values = [
         'cold_max',
         'comfortable_min',
@@ -41,10 +41,16 @@ class SenseTemp:
     # Check keys and values in provided dictionary (json file)
     # Keys should be in the list of valid entries (config_values)
     # Values should be int
+    # json file should have logical values
     @staticmethod
     def validate_config(temps: dict) -> dict:
+        def is_sorted(temps: dict, config_values: list) -> bool:
+            values = [temps[t] for t in config_values]
+            return all(values[i] <= values[i+1] for i in range(len(values) -1))
+
         if all(k in SenseTemp.config_values for k in temps.keys()) and \
-                all(isinstance(temps[t], int) for t in SenseTemp.config_values):
+                all(isinstance(temps[t], int) for t in SenseTemp.config_values) and \
+                is_sorted(temps, SenseTemp.config_values):
             return temps
         else:
             raise ValueError("Config values are wrong")
@@ -74,7 +80,6 @@ if __name__ == '__main__':
     sense = SenseHat()
     try:
         # use provided argument if exists, otherwise default to 'config.json'.
-        # eg. python3 my_custom_temp_file.json. TODO: document in README.md
         config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
         senseTemp = SenseTemp(sense, config)
         while True:
