@@ -4,8 +4,8 @@ import time
 
 
 class SenseDie:
-    def __init__(self):
-        self.sense = SenseHat()
+    def __init__(self, sense: SenseHat):
+        self.sense = sense
         self.sense.low_light = True
 
     # roll dice; detect big changes in accelerometer
@@ -40,8 +40,10 @@ class SenseDie:
         self.sense.show_letter(str(number))
 
 
-die = SenseDie()
-
-while True:
-    die.detect_roll()
-    time.sleep(3)
+if __name__ == '__main__':
+    sense = SenseHat()
+    die = SenseDie(sense)
+    while len(sense.stick.get_events()) <= 0:
+        die.detect_roll()
+        time.sleep(3)
+    sense.clear()
