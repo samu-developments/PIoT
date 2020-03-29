@@ -22,3 +22,9 @@ Display temperature in 10 second intervals. Load temp levels from config.json, o
 ```$ python3 task_b/monitor_and_display.py [custon_config_file.json]```
 
 Defaults to 'config.json' in task_b/
+
+
+### c) electronic_die.py
+### 1)
+Shake Pi to display random number (1-6) for 3 seconds.
+``` $ python3 task_c/electronic_die.py ```
