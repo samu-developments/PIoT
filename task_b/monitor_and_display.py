@@ -70,20 +70,23 @@ class SenseTemp:
         return round(self.sense.get_temperature() - 10)
 
     # Get read and display temperature
-    def display_temp(self):
+    def display_temp(self, duration: int):
         temp = self.get_real_temperature()
         display_temp = SenseTemp.led_displays[self.get_temp_level(temp)]
-        self.sense.show_message(str(temp), text_colour=display_temp)
+
+        end_time = time.time() + duration
+        while time.time() < end_time:
+            self.sense.show_message(str(temp), text_colour=display_temp)
 
 
 if __name__ == '__main__':
+    # use provided argument if exists, otherwise default to 'config.json'.
+    config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
     sense = SenseHat()
     try:
-        # use provided argument if exists, otherwise default to 'config.json'.
-        config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
         senseTemp = SenseTemp(sense, config)
-        while True:
-            senseTemp.display_temp()
-            time.sleep(10)
+        while len(sense.stick.get_events()) <= 0:
+            senseTemp.display_temp(duration=10)
     except Exception as e:
         sense.show_message(e.args[0])
+    sense.clear()
