@@ -1,4 +1,4 @@
-import csv, time
+import csv, time, sys
 
 from sense_hat import SenseHat
 
@@ -12,23 +12,26 @@ class DieGame:
         self.die = SenseDie(sense)
         self.player_a_score = 0
         self.player_b_score = 0
-        self.round = 0
+        self.round = 1  # this makes player A start
 
     def show_instructions(self):
-        self.sense.show_message("Shake die, first to 30. Player 1 begin!")
+        self.sense.show_message("Shake die, first to 30. Player A begin!")
 
-    def play(self, round: int):
+    def start_game(self):
+        # self.show_instructions()
         while not self.is_finished():
-            if round % 2 == 0:
-                self.sense.show_message("B:")
-                self.player_b_score += self.die.detect_roll()
-
-            else:
-                self.sense.show_message("A:")
-                self.player_a_score += self.die.detect_roll()
-            round += 1
+            self.play()
             time.sleep(1)
         self.finish_game()
+
+    def play(self):
+        if self.round % 2 == 0:
+            self.sense.show_letter("B")
+            self.player_b_score += self.die.detect_roll()
+        else:
+            self.sense.show_letter("A")
+            self.player_a_score += self.die.detect_roll()
+        self.round += 1
 
     def is_finished(self):
         return self.player_a_score > self.goal or self.player_b_score > self.goal
@@ -43,7 +46,7 @@ class DieGame:
 
 
 if __name__ == '__main__':
-    goal = 10
+    goal = sys.argv[1] if len(sys.argv) > 1 else 10
     sense = SenseHat()
-    game = DieGame(sense, 10)
-    game.play(0)
+    game = DieGame(sense, goal)
+    game.start_game()

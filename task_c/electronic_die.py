@@ -11,7 +11,7 @@ class SenseDie:
     # roll dice; detect big changes in accelerometer
     # get two readings from accelerometer (with a small pause between) and detect difference
     def detect_roll(self) -> int:
-        self.sense.clear()
+        # self.sense.clear()
         accelerometer = self.get_acc()
         time.sleep(.05)
         accelerometer2 = self.get_acc()
