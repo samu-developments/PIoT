@@ -1,4 +1,5 @@
 import csv, time, sys
+from typing import List
 
 from sense_hat import SenseHat
 
@@ -15,39 +16,40 @@ class Player:
 
 
 class DieGame:
-    def __init__(self, sense: SenseHat, goal: int, player1: Player, player2: Player):
+    def __init__(self, sense: SenseHat, goal: int, players: List[Player]):
         self.sense = sense
         self.goal = goal
         self.die = SenseDie(sense)
-        self.player1 = player1
-        self.player2 = player2
-        self.round = 1  # this makes player 1 start
+        self.players = players
 
     def show_instructions(self):
-        self.sense.show_message("Shake die, first to 30. Player A begin!")
+        self.sense.show_message(f"Shake die, first to {self.goal}. Player {self.players[0]} begin!")
 
     def start_game(self):
-        # self.show_instructions()
-        while not self.is_finished():
-            self.play()
-            time.sleep(1)
-        self.finish_game()
+        self.show_instructions()
+        winner = None
+        while winner is None:
+            for player in self.players:
+                self.play(player)
+                time.sleep(1)
+            winner = DieGame.is_finished(self.players, self.goal)
+        return self.finish_game(winner)
 
-    def play(self):
-        if self.round % 2 == 0:
-            self.sense.show_letter("B")
-            self.player2.score += self.die.detect_roll()
-        else:
-            self.sense.show_letter("A")
-            self.player1.score += self.die.detect_roll()
-        self.round += 1
+    def play(self, player: Player) -> int:
+        self.sense.show_letter(player.id)
+        player.score += self.die.detect_roll()
+        return player.score
 
-    def is_finished(self):
-        return self.player1.score > self.goal or self.player2.score > self.goal
+    # Returns winner or None
+    @staticmethod
+    def is_finished(players: List[Player], goal: int) -> Player:
+        leader = players[0]
+        for p in players:
+            if p.score > leader.score:
+                leader = p
+        return leader if leader.score >= goal else None
 
-    def finish_game(self):
-        winner = self.player1 if self.player1.score > self.player2.score else self.player2
-        score = winner.score
+    def finish_game(self, winner: Player):
         self.sense.show_message(f"Player {winner} wins!")
         with open('winner.csv', 'a') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
@@ -55,8 +57,13 @@ class DieGame:
 
 
 if __name__ == '__main__':
-    goal = sys.argv[1] if len(sys.argv) > 1 else 10
     sense = SenseHat()
+    goal = sys.argv[1] if len(sys.argv) > 1 else 10
+    try:
+        goal = int(goal)
+    except ValueError:
+        sense.show_message(f"Arg <{goal}> must be int, exiting.")
+        sys.exit()
     player1, player2 = Player('A'), Player('B')
-    game = DieGame(sense, goal, player1, player2)
+    game = DieGame(sense, goal, [player1, player2])
     game.start_game()
