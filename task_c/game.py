@@ -26,16 +26,18 @@ class DieGame:
         self.sense.show_message(f"Shake die, first to {self.goal}. Player {self.players[0]} begin!")
 
     def start_game(self):
-        #self.show_instructions()
+        self.show_instructions()
         winner = None
         while winner is None:
             for player in self.players:
                 self.play(player)
-                time.sleep(1)
+                time.sleep(1)  # some time to look at number
             winner = DieGame.is_finished(self.players, self.goal)
         return self.finish_game(winner)
 
+    # one player makes a turn. Return new player score
     def play(self, player: Player) -> int:
+        # if player id is long er than 1 char, show as message
         if len(player.id) > 1:
             self.sense.show_message(player.id)
         else:
@@ -43,17 +45,18 @@ class DieGame:
         player.score += self.die.detect_roll()
         return player.score
 
-    # Returns winner or None
+    # Finds winner, or winners if tie.
     @staticmethod
     def is_finished(players: List[Player], goal: int) -> List[Player]:
         leader = [players[0]]
         for p in players:
             if p.score > leader[0].score:
                 leader = [p]
-            elif p.score == leader[0].score and p.id is not leader[0].id:
+            elif p.score == leader[0].score and p.id is not leader[0].id:  # TODO: do something about players with same id
                 leader.append(p)
         return leader if leader[0].score >= goal else None
 
+    # winners is a list in case of multiple winners (tie).
     def finish_game(self, winners: List[Player]):
         winner_str = ','.join([w.id for w in winners])
         if len(winners) >= 2:

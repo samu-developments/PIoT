@@ -29,21 +29,22 @@ class SenseDie:
         acc = self.sense.get_accelerometer_raw()
         return acc['x'], acc['y'], acc['z']
 
+    # logic to determine if sense was shaken or not.
     @staticmethod
     def was_shaken(acc_1: tuple, acc_2: tuple) -> bool:
         x1, y1, z1 = acc_1
         x2, y2, z2 = acc_2
-        return abs(sum([x1 - x2, y1 - y2, z1 - z2])) > 2.5
+        return abs(sum([x1 - x2, y1 - y2, z1 - z2])) > 2.5  # this number is kinda random
 
     # show rolled die. TODO: add fancy dices and rolling graphic
-    def display_roll(self, number):
+    def display_roll(self, number: int):
         self.sense.show_letter(str(number))
 
 
 if __name__ == '__main__':
     sense = SenseHat()
     die = SenseDie(sense)
-    while len(sense.stick.get_events()) <= 0:
+    while len(sense.stick.get_events()) == 0:
         die.detect_roll()
         time.sleep(3)
     sense.clear()
