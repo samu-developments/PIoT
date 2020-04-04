@@ -1,4 +1,4 @@
-import sys, json, time
+import os, sys, json, time
 
 from sense_hat import SenseHat
 from json import JSONDecodeError
@@ -81,7 +81,8 @@ class SenseTemp:
 
 if __name__ == '__main__':
     # use provided argument if exists, otherwise default to 'config.json'.
-    config = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
+    config = os.path.join(os.getcwd(), sys.argv[1]) if len(sys.argv) > 1 else 'config.json'
+    print(config)
     sense = SenseHat()
     try:
         senseTemp = SenseTemp(sense, config)
