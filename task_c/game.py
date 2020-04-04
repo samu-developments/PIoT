@@ -26,7 +26,7 @@ class DieGame:
         self.sense.show_message(f"Shake die, first to {self.goal}. Player {self.players[0]} begin!")
 
     def start_game(self):
-        self.show_instructions()
+        #self.show_instructions()
         winner = None
         while winner is None:
             for player in self.players:
@@ -36,34 +36,49 @@ class DieGame:
         return self.finish_game(winner)
 
     def play(self, player: Player) -> int:
-        self.sense.show_letter(player.id)
+        if len(player.id) > 1:
+            self.sense.show_message(player.id)
+        else:
+            self.sense.show_letter(player.id)
         player.score += self.die.detect_roll()
         return player.score
 
     # Returns winner or None
     @staticmethod
-    def is_finished(players: List[Player], goal: int) -> Player:
-        leader = players[0]
+    def is_finished(players: List[Player], goal: int) -> List[Player]:
+        leader = [players[0]]
         for p in players:
-            if p.score > leader.score:
-                leader = p
-        return leader if leader.score >= goal else None
+            if p.score > leader[0].score:
+                leader = [p]
+            elif p.score == leader[0].score and p.id is not leader[0].id:
+                leader.append(p)
+        return leader if leader[0].score >= goal else None
 
-    def finish_game(self, winner: Player):
-        self.sense.show_message(f"Player {winner} wins!")
+    def finish_game(self, winners: List[Player]):
+        winner_str = ','.join([w.id for w in winners])
+        if len(winners) >= 2:
+            self.sense.show_message(f"Tie! {winner_str} wins!")
+        else:
+            self.sense.show_message(f"Player {winner_str} wins!")
         with open('winner.csv', 'a') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow([f"Winner: {winner}", f"Score: {winner.score}", f"Time: {time.ctime()}"])
+            t = time.ctime()
+            for w in winners:
+                writer.writerow([f"Winner: {w.id}", f"Score: {w.score}", f"Time: {t}"])
 
 
 if __name__ == '__main__':
     sense = SenseHat()
     goal = sys.argv[1] if len(sys.argv) > 1 else 10
+    players = []
+    if len(sys.argv) >= 3:
+        players = [Player(id) for id in sys.argv[2:]]
+    else:
+        players = [Player('A'), Player('B')]
     try:
         goal = int(goal)
     except ValueError:
-        sense.show_message(f"Arg <{goal}> must be int, exiting.")
+        sense.show_message(f"First arg <{goal}> must be int, exiting.")
         sys.exit()
-    player1, player2 = Player('A'), Player('B')
-    game = DieGame(sense, goal, [player1, player2])
+    game = DieGame(sense, goal, players)
     game.start_game()
