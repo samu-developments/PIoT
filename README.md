@@ -21,7 +21,7 @@ Display temperature in 10 second intervals. Load temp levels from config.json, o
 
 ```$ python3 task_b/monitor_and_display.py [custon_config_file.json]```
 
-Defaults to 'config.json' in task_b/
+Defaults to 'config.json' in working dir. 
 
 
 ### c) 
