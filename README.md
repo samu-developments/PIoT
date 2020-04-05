@@ -15,6 +15,12 @@ where 'pi' is the Raspberry Pi's user name, 10.0.0.77 ip address of pi.
 
 ## Tasks
 
+### a) animated_emoji.py
+
+Display 3 emojis in a 3 second interval.
+
+```python3 task_a/animated_emoji.py```
+
 #### b) monitor_and_display.py
 
 Display temperature in 10 second intervals. Load temp levels from config.json, or user provided file. 

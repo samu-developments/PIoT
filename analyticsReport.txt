@@ -1,5 +1,8 @@
 This is a short description of the design of the code, as per requirements. See README.md for how to run the different programs.
 
+task_a:
+SenseEmoji: wrapper class for sense and emoji pixel list.
+
 task_b:
 
 temp:
