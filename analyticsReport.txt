@@ -1,16 +1,16 @@
 This is a short description of the design of the code, as per requirements. See README.md for how to run the different programs.
 
 task_a:
-SenseEmoji: wrapper class for sense and emoji pixel list.
+SenseEmoji: Wrapper class for sense and emoji pixel list.
 
 task_b:
 
 temp:
 There are some static member fields which are used to read and validate the config file, and dictionary usedto map temperature level to display color. 
 When initialized the config file is check to see if all keys are correct, all values are int and the levels are provided in an increasing order. 
-Then it reads the temperatire and displays it for the provided time.
+Then it reads the temperature and displays it for the provided time interval.
 
 task_c:
 
-1) die: takes two measurements of the accelerometer with 0.05 seconds interval, if the difference in measurement is big enough a 'shake' has been made and a random number from [1,6] is displayed on the sense.
+1) die: Takes two measurements of the accelerometer with 0.05 seconds interval, if the difference in measurement is big enough a 'shake' has been made and a random number from [1,6] is displayed on the sense.
 2) game: Create Players and a game along with a die. As long as no winner is detected, play one more round and add score from each throw to respective player, then see if someone has a score above 'goal'. Supports tie. Writes winner(s) to a csv file. 

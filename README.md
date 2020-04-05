@@ -15,7 +15,7 @@ where 'pi' is the Raspberry Pi's user name, 10.0.0.77 ip address of pi.
 
 ## Tasks
 
-### a) animated_emoji.py
+#### a) animated_emoji.py
 
 Display 3 emojis in a 3 second interval.
 
